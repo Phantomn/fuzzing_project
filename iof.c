@@ -9,6 +9,6 @@ int main(int argc, char * argv[])
 		printf("Usage : ./iof argv\n");
 		return 0;
 	}
-	fuck
+	fuckaaa
 	
 }
