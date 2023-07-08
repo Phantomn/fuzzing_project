@@ -1,39 +1,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
- 
-typedef struct {
-    char name[10];
-    void (*print)(void*);
-} test;
- 
-typedef struct {
-    char name[128];
-} string;
- 
-void printName(test* t) {     printf("%s\n",t->name);}
- 
-void shell(void) {    printf("This is Shell\n");}
- 
-int main(int argc, char* argv[])
-{
-    test* t1;
-    string* s1;
- 
-    /* malloc and free */
-    t1 = malloc(256);
- 
-    strcpy(t1->name, "DOG");
-    t1->print = (void*)printName;
-    t1->print(t1);
-    free(t1);
- 
-    /* malloc */
-    s1 = malloc(256);
 
-    strncpy(s1->name, argv[1], 128);
-    /* use */
-    t1->print(t1);
- 
+int main(int argc, char* argv[]) {
+    // Allocate memory
+    char* data = malloc(20 * sizeof(256));
+    if (data == NULL) {
+        fprintf(stderr, "Failed to allocate memory.\n");
+        return 1;
+    }
+
+    // Copy some data to the allocated memory
+    strcpy(data, argv[1]);
+
+    printf("Before Data: %s\n", data);
+    // Free the memory
+    free(data);
+
+    // Now, the 'data' pointer is a dangling pointer. It points to memory that has been freed.
+    // Accessing this memory is undefined behavior and can lead to security vulnerabilities.
+
+    // Use after free
+    printf("Data: %s\n", data);
+
     return 0;
 }

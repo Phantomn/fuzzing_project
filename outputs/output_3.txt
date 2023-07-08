@@ -1,0 +1,5 @@
+=================================================================
+==94014==ERROR: AddressSanitizer: stack-buffer-overflow on address 0xffddbf88 at pc 0xf79d02d3 bp 0xffddbeec sp 0xffddbabc
+WRITE of size 256 at 0xffddbf88 thread T0
+AddressSanitizer:DEADLYSIGNAL
+AddressSanitizer: nested bug in the same thread, aborting.

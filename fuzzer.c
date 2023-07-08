@@ -24,21 +24,38 @@ int main(int argc, char *argv[]) {
     char* executable_path = argv[1];
     char input[MAX_INPUT_SIZE];
     char output_file[MAX_INPUT_SIZE];
+    int pipefd[2];
 
     for (int i = 0; i < NUM_ITERATIONS; i++) {
         generate_input(input);
 
         snprintf(output_file, sizeof(output_file), "%soutput_%d.txt", OUT_FILE_PATH, i);
 
-        int pid = fork();
+        if (pipe(pipefd) == -1) {
+            perror("pipe failed");
+            return 1;
+        }
 
+        int pid = fork();
         if (pid == 0) { // child process
+            close(pipefd[1]);  // Close unused write end
+
+            if (dup2(pipefd[0], STDIN_FILENO) == -1) {
+                perror("dup2 failed");
+                exit(1);
+            }
+
             freopen(output_file, "w", stdout); // redirect stdout to output_file
             freopen(output_file, "a", stderr); // redirect stderr to output_file, appending
-            execl(executable_path, executable_path, input, NULL);
+            execl(executable_path, executable_path, NULL);
             perror("execl failed");
             exit(1);
         } else if (pid > 0) { // parent process
+            close(pipefd[0]);  // Close unused read end
+
+            write(pipefd[1], input, strlen(input));
+            close(pipefd[1]);  // Close write end of the pipe
+
             int status;
             waitpid(pid, &status, 0);
             if (WIFSIGNALED(status)) {

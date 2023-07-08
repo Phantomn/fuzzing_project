@@ -1,15 +1,14 @@
-#include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-int main(int argc, char* argv[]){
+
+int vuln(){
 	char buf[80];
+	return read(0, &buf, 256);
+}
 
-	if(argc < 2){
-		printf("usage: ./bof argv\n");
-		return 0;
-	}
-
-	strcpy(buf, argv[1]);
-	printf("%s\n", buf);
-	return 0;
+int main(int argc, char** argv) {
+	vuln();
+	return write(1, "WIN\n", 4);
 }

@@ -1,0 +1,47 @@
+=================================================================
+==94018==ERROR: AddressSanitizer: stack-buffer-overflow on address 0xff9dc7a8 at pc 0xf79042d3 bp 0xff9dc70c sp 0xff9dc2dc
+WRITE of size 256 at 0xff9dc7a8 thread T0
+    #0 0xf79042d2 in __interceptor_read ../../../../../src/libsanitizer/sanitizer_common/sanitizer_common_interceptors.inc:971
+    #1 0x80492f8 in vuln (/home/phantom/fuzzing_project/bof+0x80492f8)
+
+Address 0xff9dc7a8 is located in stack of thread T0 at offset 128 in frame
+    #0 0x8049265 in vuln (/home/phantom/fuzzing_project/bof+0x8049265)
+
+  This frame has 1 object(s):
+    [48, 128) 'buf' (line 7) <== Memory access at offset 128 overflows this variable
+HINT: this may be a false positive if your program uses some custom stack unwind mechanism, swapcontext or vfork
+      (longjmp and C++ exceptions *are* supported)
+SUMMARY: AddressSanitizer: stack-buffer-overflow ../../../../../src/libsanitizer/sanitizer_common/sanitizer_common_interceptors.inc:971 in __interceptor_read
+Shadow bytes around the buggy address:
+  0x3ff3b8a0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff3b8b0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff3b8c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff3b8d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff3b8e0: 00 00 00 00 00 f1 f1 f1 f1 f1 f1 00 00 00 00 00
+=>0x3ff3b8f0: 00 00 00 00 00[f3]f3 f3 f3 00 00 00 00 00 00 00
+  0x3ff3b900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff3b910: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff3b920: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff3b930: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff3b940: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+  Shadow gap:              cc
+==94018==ABORTING
