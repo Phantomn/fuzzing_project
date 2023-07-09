@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <string.h>
 
-int main(int argc, char* argv[]){
-	char buf[80];
 
-	strcpy(buf, argv[1]);
-	return 0;
+void vuln(){
+	char buf[80];
+	return read(0, buf, 256);
+}
+
+int main(){
+	vuln();
+	return write(1, "WIN\n", 4);
 }
