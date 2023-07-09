@@ -1,0 +1,50 @@
+=================================================================
+==104881==ERROR: AddressSanitizer: stack-buffer-overflow on address 0xffa56028 at pc 0xf7a253d8 bp 0xffa55f88 sp 0xffa55b58
+WRITE of size 256 at 0xffa56028 thread T0
+    #0 0xf7a253d7 in __interceptor_strcpy ../../../../../src/libsanitizer/asan/asan_interceptors.cc:431
+    #1 0x80493a3 in vuln (/home/phantom/fuzzing_project/bof+0x80493a3)
+    #2 0x80494b2 in main (/home/phantom/fuzzing_project/bof+0x80494b2)
+    #3 0xf72deed4 in __libc_start_main (/lib/i386-linux-gnu/libc.so.6+0x1aed4)
+    #4 0x80491f5 in _start (/home/phantom/fuzzing_project/bof+0x80491f5)
+
+Address 0xffa56028 is located in stack of thread T0 at offset 128 in frame
+    #0 0x80492e5 in vuln (/home/phantom/fuzzing_project/bof+0x80492e5)
+
+  This frame has 1 object(s):
+    [48, 128) 'buf' (line 7) <== Memory access at offset 128 overflows this variable
+HINT: this may be a false positive if your program uses some custom stack unwind mechanism, swapcontext or vfork
+      (longjmp and C++ exceptions *are* supported)
+SUMMARY: AddressSanitizer: stack-buffer-overflow ../../../../../src/libsanitizer/asan/asan_interceptors.cc:431 in __interceptor_strcpy
+Shadow bytes around the buggy address:
+  0x3ff4abb0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff4abc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff4abd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff4abe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff4abf0: 00 00 00 00 00 f1 f1 f1 f1 f1 f1 00 00 00 00 00
+=>0x3ff4ac00: 00 00 00 00 00[f3]f3 f3 f3 00 00 00 00 00 00 00
+  0x3ff4ac10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff4ac20: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff4ac30: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff4ac40: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  0x3ff4ac50: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+Shadow byte legend (one shadow byte represents 8 application bytes):
+  Addressable:           00
+  Partially addressable: 01 02 03 04 05 06 07 
+  Heap left redzone:       fa
+  Freed heap region:       fd
+  Stack left redzone:      f1
+  Stack mid redzone:       f2
+  Stack right redzone:     f3
+  Stack after return:      f5
+  Stack use after scope:   f8
+  Global redzone:          f9
+  Global init order:       f6
+  Poisoned by user:        f7
+  Container overflow:      fc
+  Array cookie:            ac
+  Intra object redzone:    bb
+  ASan internal:           fe
+  Left alloca redzone:     ca
+  Right alloca redzone:    cb
+  Shadow gap:              cc
+==104881==ABORTING

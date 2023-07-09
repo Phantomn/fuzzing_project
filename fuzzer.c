@@ -1,8 +1,8 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <sys/wait.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #define MAX_INPUT_SIZE 256
 #define NUM_ITERATIONS 10
@@ -24,49 +24,39 @@ int main(int argc, char *argv[]) {
     char* executable_path = argv[1];
     char input[MAX_INPUT_SIZE];
     char output_file[MAX_INPUT_SIZE];
-    int pipefd[2];
+    char new_output_file[MAX_INPUT_SIZE];
+    char* target_name = strrchr(executable_path, '/');
+
+    if(target_name != NULL) target_name++; // if executable_path includes "/", get the substring after the last "/"
+    else target_name = executable_path;
 
     for (int i = 0; i < NUM_ITERATIONS; i++) {
         generate_input(input);
 
-        snprintf(output_file, sizeof(output_file), "%soutput_%d.txt", OUT_FILE_PATH, i);
-
-        if (pipe(pipefd) == -1) {
-            perror("pipe failed");
-            return 1;
-        }
+        snprintf(output_file, sizeof(output_file), "%s%s_output_%d.txt", OUT_FILE_PATH, target_name, i);
 
         int pid = fork();
+
         if (pid == 0) { // child process
-            close(pipefd[1]);  // Close unused write end
-
-            if (dup2(pipefd[0], STDIN_FILENO) == -1) {
-                perror("dup2 failed");
-                exit(1);
-            }
-
             freopen(output_file, "w", stdout); // redirect stdout to output_file
             freopen(output_file, "a", stderr); // redirect stderr to output_file, appending
-            execl(executable_path, executable_path, NULL);
-            perror("execl failed");
-            exit(1);
+            execl(executable_path, executable_path, input, NULL);
+            perror("execl");
+            return 1;
         } else if (pid > 0) { // parent process
-            close(pipefd[0]);  // Close unused read end
-
-            write(pipefd[1], input, strlen(input));
-            close(pipefd[1]);  // Close write end of the pipe
-
             int status;
             waitpid(pid, &status, 0);
+
             if (WIFSIGNALED(status)) {
                 printf("The program crashed on iteration %d with input: %s, signal: %d\n", i, input, WTERMSIG(status));
+                snprintf(new_output_file, sizeof(new_output_file), "%s%s_output_%d_%d.txt", OUT_FILE_PATH, target_name, WTERMSIG(status), i);
+                rename(output_file, new_output_file); // rename the file with signal number
                 return 1;
             }
         } else { // fork failed
-            perror("fork failed");
+            perror("fork");
             return 1;
         }
     }
-
     return 0;
 }
