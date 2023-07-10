@@ -1,0 +1,3 @@
+[submodule "SECCON2017_online_CTF"]
+	path = SECCON2017_online_CTF
+	url = https://github.com/SECCON/SECCON2017_online_CTF
